@@ -55,7 +55,7 @@
 %%
 %%   @type template() = string() | binary(). Template to compile (string or binary)
 %%   @type compiled() = [char()|token()]
-%%          token() = tupe().
+%%          token() = tuple().
 %%
 %% @doc Compiles the template string T and returns the compiled 
 %% template or an error.
