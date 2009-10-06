@@ -299,6 +299,8 @@ render_element({ift, {{attribute, Test}, Then, Else}, Line}, Data) ->
 		    
 	TestP ->
 	    case render_final(TestP, Data, test) of
+		undefined ->
+		    render(Else, Data);
 		false ->
 		    render(Else, Data);
 		[] ->
@@ -317,6 +319,8 @@ render_element({ift, {{attribute, Test}, Then}, Line}, Data) ->
 	    on_error(fun empty_string/0, Data, X, Line);
 	TestP ->
 	    case render_final(TestP, Data, test) of
+		undefined ->
+		    [];
 		false ->
 		    [];
 		[] ->
