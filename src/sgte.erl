@@ -118,7 +118,7 @@ compile_file(FileName, Options) ->
 %%
 %% @type data() = [tuple()]|dict()
 %% @type options() = [option()]
-%%       option()  = quiet|{gettext_lc, string()}|{encoding, encoding()}.
+%%       option()  = quiet|noisy|{gettext_lc, string()}|{encoding, encoding()}.
 %%
 %% @doc Renders the compiled template.
 %% @end

@@ -340,7 +340,7 @@ render_element(Term, _Data) ->
 %%                Line::int()) -> string()
 %% @doc In case of an error due to a value not passed in data 
 %% manage the result based on options. If the quiet option is set 
-%% returns Continuation(), else a warning message is returned.
+%% returns Continuation(), else a warning message is logged/returned.
 %% @end
 %%--------------------------------------------------------------------
 on_error(Continuation, Data, ErrReason, Line) ->
@@ -348,7 +348,14 @@ on_error(Continuation, Data, ErrReason, Line) ->
 	true ->
 	    Continuation();
 	false ->
-	    render_error({warning, ErrReason, {line, Line}})
+	    RenderError = render_error({warning, ErrReason, {line, Line}}),
+	    case is_noisy(options(Data)) of
+		true ->
+		    error_logger:error_msg(RenderError),
+		    RenderError;
+		false ->
+		    RenderError
+	    end
     end.
 
 %%--------------------------------------------------------------------
@@ -443,6 +450,14 @@ options(Data) ->
 %%--------------------------------------------------------------------
 is_quiet(Options) ->
     lists:member(quiet, Options).
+
+%%--------------------------------------------------------------------
+%% @spec is_noisy(options()) -> bool()
+%% @doc Search noisy option in the Option List.
+%% @end
+%%--------------------------------------------------------------------
+is_noisy(Options) ->
+    lists:member(noisy, Options).
 
 %%--------------------------------------------------------------------
 %% @spec gettext_lc(options()) -> LC::string()
