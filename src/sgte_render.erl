@@ -291,12 +291,10 @@ render_element({gettext, Key, Line}, Data) ->
 		_ -> Key
 	    end 
     end;
-render_element({ift, {{attribute, Test}, Then, Else}, Line}, Data) ->
+render_element({ift, {{attribute, Test}, Then, Else}, _Line}, Data) ->
     case get_value(Test, Data, ift) of
-	{error, X} -> % test not found -> false
-	    on_error(fun () -> render(Else, Data) end, 
-				Data, X, Line);
-		    
+	{error, _X} ->
+	    render(Else, Data);
 	TestP ->
 	    case render_final(TestP, Data, test) of
 		undefined ->
@@ -313,10 +311,10 @@ render_element({ift, {{attribute, Test}, Then, Else}, Line}, Data) ->
 		    render(Then, Data)
 	    end
     end;
-render_element({ift, {{attribute, Test}, Then}, Line}, Data) ->
+render_element({ift, {{attribute, Test}, Then}, _Line}, Data) ->
     case get_value(Test, Data, ift) of
-	{error, X} -> % test not found -> false
-	    on_error(fun empty_string/0, Data, X, Line);
+	{error, _X} ->
+	    [];
 	TestP ->
 	    case render_final(TestP, Data, test) of
 		undefined ->
