@@ -222,12 +222,16 @@ parse_key([H|T], _InEncoding, Line) ->
 	    case P([H|T]) of
 		{ok, Token, LinesParsed, Rest} ->
 		    {ok, {attribute, Token, Line}, LinesParsed, Rest};
-		{error, Reason} -> 
-		    {error, {attribute, Reason, Line}}
+		{error, _Reason} ->
+                    false  % not finding a closing $ isn't an error.
+                           % We can have independent $'s
 	    end;
 	false ->
             false
-    end.
+    end;
+parse_key([], _InEncoding, _Line) ->
+  % handle templates with nothing after the dollar sign: bob$
+  false.
 
 
 %%--------------------------------------------------------------------
