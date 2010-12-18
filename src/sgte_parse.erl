@@ -218,7 +218,7 @@ parse_key("if "++T, InEncoding, Line) ->
 parse_key([H|T], _InEncoding, Line) ->
     case lists:member(H, ?KEYWORD_START) of
 	true ->
-	    P =  until(fun is_dollar/1),
+            P = until_only_keys(fun die_on_special/1),
 	    case P([H|T]) of
 		{ok, Token, LinesParsed, Rest} ->
 		    {ok, {attribute, Token, Line}, LinesParsed, Rest};
@@ -458,8 +458,39 @@ until(P, [H|T], Line, Parsed) ->
             Parsed1 = lists:reverse(Parsed),
             TokL = [list_to_token(X) || X <- string:tokens(Parsed1, ".")],
 	    {ok, TokL, Line, T};
+        stop ->
+            {error, stopped_parsing};
 	_ ->
 	    until(P, T, Line, [H|Parsed])
+    end.
+
+%%--------------------------------------------------------------------
+%% @spec until_only_keys(predicate()) -> parsed()|{error, Reason}
+%%
+%% @type predicate() = function(template()).
+%%
+%% @doc until_only_keys predicate P: 
+%% output what it gets until_only_keys P(H) is true stripping white spaces.
+%% @end
+%%--------------------------------------------------------------------
+until_only_keys(P) ->
+    fun (Tmpl) -> until_only_keys(P, Tmpl, 0, []) end.
+until_only_keys(_P, [], _Line, _Parsed) ->    
+    {error, end_not_found};
+until_only_keys(P, [H|T], Line, Parsed) when [H]=="\r" andalso hd(T)=="\n" ->
+    {error, end_not_found};
+until_only_keys(P, [H|T], Line, Parsed) when [H]=="\n" orelse [H]== "\r" ->
+    {error, end_not_found};
+until_only_keys(P, [H|T], Line, Parsed) ->
+    case P(H) of
+	true ->
+            Parsed1 = lists:reverse(Parsed),
+            TokL = [list_to_token(X) || X <- string:tokens(Parsed1, ".")],
+	    {ok, TokL, Line, T};
+        stop ->
+            {error, stopped_parsing};
+	_ ->
+	    until_only_keys(P, T, Line, [H|Parsed])
     end.
 
 %%--------------------------------------------------------------------
@@ -588,6 +619,20 @@ is_blank(C) ->
 %%--------------------------------------------------------------------
 is_dollar(C) ->
     match_char(C, "$").
+
+die_on_special(C) ->
+    FoundDollar = is_dollar(C),
+    OkayPoint =
+      ((C >= $0 andalso C =< $9) orelse
+        (C >= $A andalso C =< $Z) orelse
+        (C >= $a andalso C =< $z) orelse
+         C =:= $_ orelse C =:= $( orelse C =:= $) orelse
+         C =:= $.),
+    if
+      FoundDollar -> FoundDollar;
+      OkayPoint -> false;
+      true -> stop
+    end.
 
 %%--------------------------------------------------------------------
 %% @spec is_open_bracket(char()) -> bool()

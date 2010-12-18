@@ -92,7 +92,7 @@ if_test_() ->
 js_support_test_() ->
     {ok, CF} = sgte:compile("$('someId') and a $nested.attr$ and $('anotherId')"),
     Res = sgte:render_str(CF, [{nested, [{attr, "nested attribute"}]}]),
-    ?_assert(Res =:= "$('someId') and a nested attribute and $('anotherId')").
+    ?_assertEqual(Res, "$('someId') and a nested attribute and $('anotherId')").
 
 
 %%--------------------

@@ -25,7 +25,7 @@ string_test_() ->
     ResultStr2 = "This is a test:\n" ++
 	"[SGTE Warning: template: attribute - key testAttr1 not found on line 2] followed by [SGTE Warning: template: attribute - key testAttr2 not found on line 2] and unicode chars àèìòù",
     [?_assert(Res =:= ResultStr),
-     ?_assert(Res2 =:= ResultStr2)].
+     ?_assertEqual(Res2, ResultStr2)].
 
 include_test_() ->
     {ok, C1} = sgte:compile("bar"),

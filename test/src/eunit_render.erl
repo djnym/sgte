@@ -30,8 +30,8 @@ string_test_() ->
         <<" followed by ">>,
         <<"[SGTE Warning: template: attribute - key testData not found on line 2]">>,
         unicode:characters_to_binary(" and unicode chars àèìòù")],
-    [?_assert(Res =:= ResultStr),
-     ?_assert(Res2 =:= ResultStr2)].
+    [?_assertEqual(Res, ResultStr),
+     ?_assertEqual(Res2, ResultStr2)].
 
 include_test_() ->
     {ok, C1} = sgte:compile("bar"),
