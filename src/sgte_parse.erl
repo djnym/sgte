@@ -477,9 +477,9 @@ until_only_keys(P) ->
     fun (Tmpl) -> until_only_keys(P, Tmpl, 0, []) end.
 until_only_keys(_P, [], _Line, _Parsed) ->    
     {error, end_not_found};
-until_only_keys(P, [H|T], Line, Parsed) when [H]=="\r" andalso hd(T)=="\n" ->
+until_only_keys(_P, [H|T], _Line, _Parsed) when [H]=="\r" andalso hd(T)=="\n" ->
     {error, end_not_found};
-until_only_keys(P, [H|T], Line, Parsed) when [H]=="\n" orelse [H]== "\r" ->
+until_only_keys(_P, [H|_T], _Line, _Parsed) when [H]=="\n" orelse [H]== "\r" ->
     {error, end_not_found};
 until_only_keys(P, [H|T], Line, Parsed) ->
     case P(H) of
