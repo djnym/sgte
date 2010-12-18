@@ -1,0 +1,8 @@
+.eunit/
+ebin/
+tags
+conf/config.status
+conf/config.log
+conf/autom4te.cache/
+conf/configure
+conf/include.mk
