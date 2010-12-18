@@ -44,8 +44,8 @@ simpleif_test_() ->
     DElse = [],
     RThen = sgte:render_str(C, DThen),
     RElse = sgte:render_str(C, DElse, [quiet]),
-    [?_assert(RThen =:= "Start [SGTE Warning: template: ift - key test not found on line 1]"),
-     ?_assert(RElse =:= "Start else branch")].
+    [?_assertEqual(RThen, "Start else branch"),  % We can now have undefined keys = false
+     ?_assertEqual(RElse, "Start else branch")].
 
 if_test_() ->
     {ok, Compiled} = sgte:compile(if_string()),
