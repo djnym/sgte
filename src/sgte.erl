@@ -30,6 +30,7 @@
          compile_file/1, 
          compile_file/2, 
          render/2, 
+         multi_render/2,
          render/3, 
          render_str/2,
          render_str/3,
@@ -134,6 +135,9 @@ render(Compiled, Data, Options) ->
 %%--------------------------------------------------------------------
 render(Compiled, Data) ->
     sgte_render:render(Compiled, Data).
+
+multi_render(CompiledTemplates, Data) ->
+    sgte_render:multi_render(CompiledTemplates, Data).
 
 %%--------------------------------------------------------------------
 %% @spec render_str(Compiled::compiled(), Data::data(), Options::options()) -> string()

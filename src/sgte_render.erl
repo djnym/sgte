@@ -34,6 +34,7 @@
 
 -export([render/2, 
          render/3, 
+         multi_render/2,
          render_str/2, 
          render_str/3, 
          render_bin/2,
@@ -86,6 +87,11 @@ render(Compiled, Data, Options) ->  %% Data is a sgte_dict
 %% @doc Renders the compiled template and returns it
 %% @end
 %%--------------------------------------------------------------------
+multi_render(CompiledTemplates, Data) when is_list(hd(CompiledTemplates)) ->
+  [render(X, Data) || X <- CompiledTemplates];
+multi_render(CompiledTemplate, Data) ->
+  render(CompiledTemplate, Data).
+
 render(Compiled, Data) when is_list(Data) ->
     render(Compiled, sgte_dict:from_list(Data));
 render(Compiled, Data) when is_function(Compiled) ->
