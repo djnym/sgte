@@ -16,23 +16,33 @@ gettext_dir() ->
 %% Tests
 %%
 %%--------------------
+have_gettext () ->
+  case code:which (gettext_server) of
+    non_existing -> false;
+    _ -> true
+  end.
+
 
 %% Setup Tests
 setup() ->
-    try
-        {ok, _} = gettext_server:start(?MODULE),
-        {_, SeBin} = file:read_file("../priv/gettext_test/swedish.po"),
-        {_, ItBin} = file:read_file("../priv/gettext_test/italian.po"),
-        ok = gettext:store_pofile("se", SeBin),
-        ok = gettext:store_pofile("it", ItBin)
-    catch
-        _Err:_Reason = Error ->
-                % We need to ensure that the gettext_server is taken down to prevent misleading results
-                exit(whereis(gettext_server), kill),
-                ErrorStr = lists:flatten(["The test suite setup could not be completed due to: ", io_lib:write(Error)]),
-                erlang:display(ErrorStr),
-            error
-    end.
+  case have_gettext() of
+    false -> ok;
+    _ ->
+      try
+          {ok, _} = gettext_server:start(?MODULE),
+          {_, SeBin} = file:read_file("../priv/gettext_test/swedish.po"),
+          {_, ItBin} = file:read_file("../priv/gettext_test/italian.po"),
+          ok = gettext:store_pofile("se", SeBin),
+          ok = gettext:store_pofile("it", ItBin)
+      catch
+          _Err:_Reason = Error ->
+                  % We need to ensure that the gettext_server is taken down to prevent misleading results
+                  exit(whereis(gettext_server), kill),
+                  ErrorStr = lists:flatten(["The test suite setup could not be completed due to: ", io_lib:write(Error)]),
+                  erlang:display(ErrorStr),
+              error
+      end
+  end.
 
 %% Test Compile
 compile_test_() ->
@@ -41,15 +51,19 @@ compile_test_() ->
 
 %% Test Render
 do_test_() ->
-    {setup,
-                fun setup/0,
-                [
-                        fun simple_it/0,
-            fun simple_se/0,
-            fun simple_en/0,
-            fun simple_undef/0,
-            fun no_lc/0
-                ]}.
+  case have_gettext() of
+    false -> fun () -> ok end;
+    true ->
+      {setup,
+       fun setup/0,
+       [
+         fun simple_it/0,
+         fun simple_se/0,
+         fun simple_en/0,
+         fun simple_undef/0,
+         fun no_lc/0
+       ]}
+  end.
 
 simple_it() ->
     {ok, C} = sgte:compile(simple()),

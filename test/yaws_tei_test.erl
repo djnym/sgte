@@ -15,7 +15,10 @@
 %%
 %%--------------------
 setup_test() ->
-    yaws_tei:start_link().
+  case code:which(yaws_tei) of
+    non_existing -> ok;
+    _ -> yaws_tei:start_link()
+  end.
 
 %%
 %% Render Test
