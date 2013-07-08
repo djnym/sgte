@@ -1,3 +1,18 @@
+0.7.6
+- support nesting in the else clause of conditionals
+
+0.7.5
+- add multi_render
+
+0.7.4
+- don't allow space or newlines in key names (breaks backward compatibility)
+
+0.7.3
+- allow bare '$'
+
+0.7.2
+- allow undefined to be false in conditionals
+
 0.7
 
 - changed format of compiled templates from string to binaries
