@@ -307,14 +307,14 @@ collect_ift("$end if$"++Rest, _InEncoding, Token, {Test}, Line) ->
     {ift, {Test, lists:reverse(Token)}, Line, Rest};
 collect_ift("$else$"++Rest, InEncoding, Token, {Test}, Line) ->
     collect_ift(Rest, InEncoding, [], {Test, lists:reverse(Token)}, Line);
-collect_ift("$if "++Rest, InEncoding, Token, {Test}, Line) ->  %% Nested if
+collect_ift("$if "++Rest, InEncoding, Token, Test, Line) ->  %% Nested if
     case collect_ift(Rest, InEncoding, [], {}, Line) of
         {ift, InnerIf, LinesParsed, Rest1} ->
             case parse_ift(InnerIf, InEncoding) of
                 {error, Reason} ->
                     {error, Reason};
                 {ift, ParsedIf} ->
-                    collect_ift(Rest1,InEncoding,[{ift, ParsedIf, Line}, lists:reverse(Token)], {Test}, Line+LinesParsed)
+                    collect_ift(Rest1,InEncoding,[{ift, ParsedIf, Line}, lists:reverse(Token)], Test, Line+LinesParsed)
             end;
         {error, E} ->
             {error, E}

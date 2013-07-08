@@ -92,6 +92,24 @@ if_test_() ->
               "Monte Bianco, Cerro Torre, Mt. Everest, Catinaccio Bye Bye."),
      ?_assert(Res2 =:= "Hello! No Name Found Bye Bye.")].
 
+undefined_if_test_() ->
+  {ok, C} = sgte:compile ("$if o$true$else$false$end if$"),
+  [
+    ?_assert (sgte:render_str (C,[{o,true}]) =:= "true"),
+    ?_assert (sgte:render_str (C,[{o,false}]) =:= "false"),
+    ?_assert (sgte:render_str (C,[]) =:= "false")
+  ].
+
+nested_if_test_ () ->
+  {ok, C} =
+     sgte:compile ("$if o$$if i$TT$else$TF$end if$$else$$if i$FT$else$FF$end if$$end if$"),
+  [
+   ?_assert ("TT" =:= sgte:render_str (C, [{o, true},{i, true}])),
+   ?_assert ("FT" =:= sgte:render_str (C, [{o, false},{i, true}])),
+   ?_assert ("TF" =:= sgte:render_str (C, [{o, true},{i, false}])),
+   ?_assert ("FF" =:= sgte:render_str (C, [{o, false},{i, false}]))
+  ].
+
 fif_test_() ->
     {ok, Compiled} = sgte:compile(if_string()),
     NameL = mountainList(),
