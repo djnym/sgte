@@ -221,7 +221,18 @@ parse_key([H|T], _InEncoding, Line) ->
           P = until_only_keys(fun die_on_special/1),
           case P([H|T]) of
             {ok, Token, LinesParsed, Rest} ->
-              {ok, {attribute, Token, Line}, LinesParsed, Rest};
+                case Token of
+                    [Attr] ->
+                       T1 = atom_to_list(Attr),
+                       case string:tokens(T1, ":") of
+                           [Val, Fun] ->
+                                {ok, {apply, {[list_to_atom(Fun)], [list_to_atom(Val)]}, Line}, LinesParsed, Rest};
+                           _ ->
+                                {ok, {attribute, Token, Line}, LinesParsed, Rest}
+                       end;
+                    _ ->
+                       {ok, {attribute, Token, Line}, LinesParsed, Rest}
+                end;
             {error, _Reason} ->
               false  % not finding a closing $ isn't an error.
               % We can have independent $'s
@@ -458,8 +469,6 @@ until(P, [H|T], Line, Parsed) ->
             Parsed1 = lists:reverse(Parsed),
             TokL = [list_to_token(X) || X <- string:tokens(Parsed1, ".")],
             {ok, TokL, Line, T};
-        stop ->
-          {error, stopped_parsing};
         _ ->
           until(P, T, Line, [H|Parsed])
     end.
@@ -623,7 +632,7 @@ die_on_special(C) ->
         (C >= $A andalso C =< $Z) orelse
         (C >= $a andalso C =< $z) orelse
          C =:= $_ orelse C =:= $( orelse C =:= $) orelse
-         C =:= $.),
+         C =:= $. orelse C =:= $:),
     if
       FoundDollar -> FoundDollar;
       OkayPoint -> false;
@@ -657,9 +666,7 @@ is_close_bracket(C) ->
 list_to_token([]) ->
     {error, "Invalid token."};
 list_to_token(L) when is_list(L) ->
-    list_to_token1(L, lists:nth(1, L), lists:last(L));
-list_to_token(_) ->
-    {error, "Invalid token."}.
+    list_to_token1(L, lists:nth(1, L), lists:last(L)).
 
 list_to_token1(L, $', $') ->
     list_to_atom(string:substr(L, 2, length(L) - 2));

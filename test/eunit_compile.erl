@@ -17,13 +17,13 @@ multi_attr_test_() ->
     {ok, Compiled} = sgte:compile(Str),
     ?_assert(Compiled =:= [{attribute, [foo, bar, baz], 1}]).
 
-multiline_attr_test_() ->
-    Str = "foo
-$bar
-$
- baz",
-    {ok, Compiled} = sgte:compile(Str),
-    ?_assert(Compiled =:= [<<"foo \n">>, {attribute, [bar], 2}, <<"\n baz">>]).
+%multiline_attr_test_() ->
+%    Str = "foo
+%$bar
+%$
+% baz",
+%    {ok, Compiled} = sgte:compile(Str),
+%    ?_assert(Compiled =:= [<<"foo \n">>, {attribute, [bar], 2}, <<"\n baz">>]).
 
 include_test_() ->
     {ok, C} = sgte:compile("foo $include tmpl$ baz"),
