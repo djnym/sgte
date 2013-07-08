@@ -58,7 +58,7 @@ gettext_init(TargetDir, SrcFiles, Domain) ->
     %% when missing.
     ok = filelib:ensure_dir(TargetDir),
     %% Create the .pot file
-    case file:open(filename:join([TargetDir, Domain]), write) of
+    case file:open(filename:join([TargetDir, Domain]), [write]) of
         {ok, Fd} ->
             %% Write .pot header
             io:format(Fd, po_header(), []),

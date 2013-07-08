@@ -381,17 +381,12 @@ empty_string() ->
 %%--------------------------------------------------------------------
 render_error({warning, {TmplEl, Key, not_found}, {line, LineNo}}) ->
     io_lib:format("[SGTE Warning: template: ~p - key ~p not found on line ~p]", [TmplEl, Key, LineNo]);
-render_error({error, {TmplEl, Key, not_found}, {line, LineNo}}) ->
-    io_lib:format("[SGTE Error: template: ~p - key ~p not found on line ~p]", [TmplEl, Key, LineNo]);
 %% Render an error in the data type format
 render_error({error, {Term, DataType, invalid_data}}) ->
     io_lib:format("[SGTE Error: invalid data type: ~p is a ~p. String expected]", [Term, DataType]);
 %% Render a WarningMsg passed as a string
 render_error({warning, {TmplEl, WarningMsg}, {line, LineNo}}) when is_list(WarningMsg) ->
-    io_lib:format("[SGTE Warning: ~p ~s on line ~p]", [TmplEl, WarningMsg, LineNo]);
-%% Render an ErrMsg passed as a string
-render_error({error, {TmplEl, ErrMsg}, {line, LineNo}}) when is_list(ErrMsg) ->
-    io_lib:format("[SGTE Error: ~p ~s on line ~p]", [TmplEl, ErrMsg, LineNo]).
+    io_lib:format("[SGTE Warning: ~p ~s on line ~p]", [TmplEl, WarningMsg, LineNo]).
 
 %%--------------------------------------------------------------------
 %% Utilities

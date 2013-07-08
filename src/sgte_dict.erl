@@ -38,6 +38,7 @@
          rfoldr/2,
          rappend/3,
          find/2,
+         find/3,
          store/3,
          merge/3,
          from_list/1,
@@ -45,21 +46,20 @@
          rec_to_kv/2]).
 
 %% recursive find
+-spec rfind(_,[any()]|dict()) -> {'error',_} | {'ok',_}.
 rfind(K, L) when not is_list(K) ->
     ?MODULE:rfind([K], L);
 rfind([], L) ->
     {ok, L};
 rfind([K|_]=F, L) when is_list(L) ->
     rfind_proplist(proplists:get_value(K, L), F);
-rfind([K|_]=F, L) when element(1, L) =:= dict ->
-    rfind_dict(dict:find(K, L), F);
+rfind([H|T], L) when element(1, L) =:= dict ->
+  case dict:find(H, L) of
+    error -> {error, H};
+    {ok, D} -> ?MODULE:rfind(T, D)
+  end;
 rfind(_, _) ->
     {error, invalid_dict}.
-
-rfind_dict(error, [H|_]) ->
-    {error, H};
-rfind_dict({ok, D}, [_|T]) ->
-    ?MODULE:rfind(T, D).
 
 rfind_proplist(undefined, [H|_]) ->
     {error, H};
