@@ -1,5 +1,4 @@
 .eunit/
-ebin/
 tags
 conf/config.status
 conf/config.log

@@ -18,7 +18,7 @@ multi_attr_test_() ->
     ?_assert(Compiled =:= [{attribute, [foo, bar, baz], 1}]).
 
 multiline_attr_test_() ->
-    Str = "foo 
+    Str = "foo
 $bar
 $
  baz",
@@ -37,7 +37,11 @@ tmpl$ baz",
 
 apply_test_() ->
     {ok, C} = sgte:compile("foo $apply bar myVar$ baz"),
-    ?_assert(C =:= [<<"foo ">>, {apply, {[bar], [myVar]}, 1}, <<" baz">>]).
+    {ok, C1} = sgte:compile("foo $myVar:bar$ baz"),
+    [?_assert(C =:= [<<"foo ">>, {apply, {[bar], [myVar]}, 1}, <<" baz">>]),
+     ?_assert(C1 =:= [<<"foo ">>, {apply, {[bar], [myVar]}, 1}, <<" baz">>]),
+     ?_assert(C =:= C1)].
+
 
 map_test_() ->
     {ok, C} = sgte:compile("foo $map bar varList$ baz"),
@@ -78,8 +82,8 @@ if_test_() ->
 %% Template String
 simple_if() ->
     "Start $if test.flag$" ++
-	"then branch" ++
+        "then branch" ++
         "$else$" ++
-	"else branch"++
-	"$end if$".
+        "else branch"++
+        "$end if$".
 
