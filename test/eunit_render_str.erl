@@ -33,6 +33,16 @@ string_test_() ->
     [?_assert(Res =:= ResultStr),
      ?_assert(Res2 =:= ResultStr2)].
 
+appinc_test_() ->
+  {ok, C0} = sgte:compile ("foo & bar"),
+  {ok, C1} = sgte:compile ("$appinc a_fun tmpl$"),
+  P  = [ { a_fun, fun (A) -> io_lib:format ("[~s]",[A]) end },
+         { tmpl, C0 }
+       ],
+  Res = sgte:render_str (C1, P),
+  ResultStr = "[foo & bar]",
+  ?_assert (Res =:= ResultStr).
+
 include_test_() ->
     {ok, C1} = sgte:compile("bar"),
     {ok, C2} = sgte:compile("foo $include tmpl$ baz"),

@@ -211,6 +211,23 @@ render_element({join, {Separator, Term}, Line}, Data) ->
             end
     end;
 
+render_element ({appinc, {Callable, Tmpl}, Line}, Data) ->
+  case get_value (Tmpl, Data, include) of
+    {error, X} ->
+      on_error(fun empty_string/0, Data, X, Line);
+    Compiled ->
+      case get_value(Callable, Data, apply) of
+        {error, X} ->
+          on_error(fun empty_string/0, Data, X, Line);
+        ToCall ->
+          case render (Compiled, Data) of
+            {error, X} ->
+              on_error(fun empty_string/0, Data, X, Line);
+            Value ->
+              printable(ToCall(Value), fun(El) -> El end)
+          end
+      end
+  end;
 render_element({include, Tmpl, Line}, Data) -> %% include template passing all data
     case get_value(Tmpl, Data, include) of
         {error, X} ->

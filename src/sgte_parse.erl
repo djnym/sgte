@@ -101,7 +101,16 @@ parse([H|T], InEncoding, Parsed, Acc, Line) ->
             parse(T1, InEncoding, Parsed, [H1|Acc], Line)
     end.
 
-
+parse_key("appinc"++T, _InEncoding, Line) ->
+  P = and_parser ([fun strip_blank/1,
+                   until_space(fun is_blank/1),
+                   until(fun is_dollar/1)]),
+  case P(T) of
+    { ok, [F, I], LinesParsed, Rest} ->
+      {ok, {appinc, {F, I}, Line}, LinesParsed, Rest};
+    { error, Reason } ->
+      {erro, {appinc, Reason, Line}}
+  end;
 parse_key("include"++T, _InEncoding, Line) ->
     P = and_parser([fun strip_blank/1,
                     until(fun is_dollar/1)]),

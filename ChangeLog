@@ -1,3 +1,7 @@
+0.8.0
+- add appinc keyword for those times when you want to apply a function to an
+  included template
+
 0.7.6
 - support nesting in the else clause of conditionals
 
