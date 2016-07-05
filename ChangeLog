@@ -1,3 +1,6 @@
+0.8.1
+- allow for namespaced types
+
 0.8.0
 - add appinc keyword for those times when you want to apply a function to an
   included template

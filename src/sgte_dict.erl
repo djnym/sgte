@@ -45,8 +45,14 @@
          rec_to_name_kv/2,
          rec_to_kv/2]).
 
+-ifdef(namespaced_types).
+-type remote_dict() :: dict:dict().
+-else.
+-type remote_dict() :: dict().
+-endif.
+
 %% recursive find
--spec rfind(_,[any()]|dict()) -> {'error',_} | {'ok',_}.
+-spec rfind(_,[any()]|remote_dict()) -> {'error',_} | {'ok',_}.
 rfind(K, L) when not is_list(K) ->
     ?MODULE:rfind([K], L);
 rfind([], L) ->
