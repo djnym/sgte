@@ -1,3 +1,5 @@
+ERLANG_VERSION:=$(shell erl -eval 'io:format("~s",[erlang:system_info(otp_release)]), halt().'  -noshell)
+
 all:
 	@rebar get-deps compile
 
@@ -7,7 +9,14 @@ edoc:
 check:
 	@rm -rf .eunit
 	@mkdir -p .eunit
-	@dialyzer -Wno_opaque -Wno_return --src src
+	@case $(ERLANG_VERSION) in \
+	   R*) \
+	     dialyzer -Wno_opaque -Wno_return --src src \
+		 ;; \
+	   18|19|2[0-9]) \
+	     dialyzer -Wno_opaque -Wno_return -Dnamespaced_types=true --src src \
+		 ;; \
+	  esac
 	@rebar skip_deps=true eunit
 
 clean:

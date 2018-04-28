@@ -77,7 +77,7 @@ rstore(K, V, L) when not is_list(K) ->
 rstore([Key], V, D) when element(1, D) =:= dict ->
     dict:store(Key, V, D);
 rstore([Key|T], V, D) when element(1, D) =:= dict ->
-    D1 = find(Key, D, fun dict:new/1),
+    D1 = find(Key, D, fun dict:new/0),
     dict:store(Key, ?MODULE:rstore(T, V, D1), D);
 rstore([Key], V, L) when is_list(L) ->
     L1 = proplists:delete(Key, L),

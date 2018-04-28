@@ -1,6 +1,6 @@
 {application, sgte,
   [{description, "sgte - a simple Erlang template engine"},
-  {vsn, "0.8.1"},
+  {vsn, "0.8.2"},
   {modules, []},
   {registered, []},
   {applications, [kernel, stdlib]}
