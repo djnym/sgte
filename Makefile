@@ -1,28 +1,21 @@
-ERLANG_VERSION:=$(shell erl -eval 'io:format("~s",[erlang:system_info(otp_release)]), halt().'  -noshell)
+NAME=sgte
 
 all:
-	@rebar get-deps compile
+	rebar3 compile
 
-edoc:
-	@rebar skip_deps=true doc
+test:
+	rebar3 as test dialyzer,eunit,cover
 
-check:
-	@rm -rf .eunit
-	@mkdir -p .eunit
-	@case $(ERLANG_VERSION) in \
-	   R*) \
-	     dialyzer -Wno_opaque -Wno_return --src src \
-		 ;; \
-	   18|19|2[0-9]) \
-	     dialyzer -Wno_opaque -Wno_return -Dnamespaced_types=true --src src \
-		 ;; \
-	  esac
-	@rebar skip_deps=true eunit
+name:
+	@echo $(NAME)
+
+version:
+	@echo $(shell awk 'match($$0, /[0-9]+\.[0-9]+(\.[0-9]+)+/){print substr($$0, RSTART,RLENGTH); exit}' ChangeLog)
 
 clean:
-	@rebar clean
+	rebar3 clean
 
-maintainer-clean:
-	@rebar clean
-	@rebar delete-deps
-	@rm -rf deps
+maintainer-clean: clean
+	rm -rf _build ebin
+
+.PHONY:	all test name version clean maintainer-clean
